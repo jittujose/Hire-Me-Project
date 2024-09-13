@@ -34,6 +34,6 @@ The "Hire Me" platform is a cloud-based web application designed to connect user
 
 ## G2 Token Details
 
-The **G2 Token** is an ERC-20 token created on the Ethereum blockchain. It serves as a payment method on the "Hire Me" platform, offering a secure and efficient way to transact between users and temporary freelance workers. The token is implemented using a Solidity smart contract, ensuring transparency and reliability in all transactions. Users can manage their G2 tokens using MetaMask, which facilitates easy and secure token transfers.
+The **G2 Token** is an ERC-20 token created on the Ethereum blockchain. It serves as a payment method on the "Hire Me" platform, offering a secure and efficient way to transact between users and temporary freelance workers. The token is implemented using a Solidity smart contract, ensuring transparency and reliability in all transactions. Users can manage their G2 tokens using MetaMask, which facilitates easy and secure token transfers. Currently deployed to Polygon testnet.
 
 
