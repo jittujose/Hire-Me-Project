@@ -1,0 +1,313 @@
+<!-- <!DOCTYPE html>
+<html>
+    <head>
+        <title>Firestore basics</title>
+        <link type="text/css" href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet"/>
+    <script type="module" src="{{ url_for('static', path='/firebase-login.js') }}"></script>
+    </head>
+<body>
+    <div id="login-box" hidden="true">
+        Email :<input type="email" name="" id="email"><br/>
+        Password: <input type="password" name="" id="password"><br/>
+        <button id="login">Login</button>
+        <button id="sign-up">Sign Up</button>
+    </div>
+    <button id="sign-out" hidden="true">Sign out</button>
+
+
+
+        {% if user_token %}
+            <p>User email: {{ user_token.email }}</p>
+            <p>error message: {{ error_message }}</p>
+            <p>Name: {{ user_info.get('name') }}</p>
+
+        <form action="/buyG2" method="post" id="buyG2Token">
+            <input type="submit" value="Buy G2 token"/>
+        </form>
+
+        <form action="/serachEmpl" id="serachEmplForm" method="post">
+            <p>Please choose an option:</p>
+                
+                <select name="options" required>
+                    <option value="" disabled selected>Select your option</option>
+                    <option value="4 wheel Driver">4 wheel Driver</option>
+                    <option value="Plumber">Plumber</option>
+                    <option value="Electrician">Electrician</option>
+                    <option value="Car Mechanic">Car Mechanic</option>
+                    <option value="Bike Mechanic">Bike Mechanic</option>
+                    <option value="Grass Cutter">Grass Cutter</option>
+                    <option value="Wall Painter">Wall Painter</option>
+
+                </select>
+                <input type="hidden" id="location" name="location"/>
+                <input type="submit" value="Search Employee"/>
+        </form>
+
+        <br/>
+        <form action="/postJob" id="postJobid" method="post">
+            <p>choose job type</p>
+            <select name="options" required>
+                <option value="" disabled selected>Select your option</option>
+                <option value="4 wheel Driver">4 wheel Driver</option>
+                <option value="Plumber">Plumber</option>
+                <option value="Electrician">Electrician</option>
+                <option value="Car Mechanic">Car Mechanic</option>
+                <option value="Bike Mechanic">Bike Mechanic</option>
+                <option value="Grass Cutter">Grass Cutter</option>
+                <option value="Wall Painter">Wall Painter</option>
+            </select>
+            Deadline date : <input type="date" name="deadline" id="deadline"/><br/>
+            Maximum budget : <input type="number" name="maxbudget"/><br/>
+            Note : <textarea name="note"> </textarea><br/>
+            <h6>You should post this job from the required location.</h6><br/>
+            <input type="hidden" id="locationPost" name = "location" />
+            <input type="submit" value="Post Work"/>
+        </form>
+
+        <br>
+        <table>
+            <tr>
+                <th>Deadline</th>
+                <th>Note</th>
+                <th>Maximum Budget</th>
+                <th>Action</th>
+            </tr>
+        {% for oneReq in posted_jobs %}
+            <tr>
+                <td>{{oneReq.get('deadline')}}</td>
+                <td>{{oneReq.get('note')}}</td>
+                <td>{{oneReq.get('maxBudget')}}</td>
+                <td>
+                    <form action="/viewBids" method="post">
+                        <input type="hidden" name = "jobid" value="{{oneReq.get('id')}}"/>
+                        <input type="submit" value="View Biddings"/>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+        <script>
+            document.getElementById('postJobid').addEventListener('submit', function(event) {
+                event.preventDefault();
+    
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        document.getElementById('locationPost').value = position.coords.latitude + ',' + position.coords.longitude;
+                        document.getElementById('postJobid').submit();
+                    }, function(error) {
+                        alert('Error occurred. Error code: ' + error.code);
+                    });
+                } else {
+                    alert('Geolocation is not supported by this browser.');
+                }
+            });
+
+            document.getElementById('serachEmplForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+    
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        document.getElementById('location').value = position.coords.latitude + ',' + position.coords.longitude;
+                        document.getElementById('serachEmplForm').submit();
+                    }, function(error) {
+                        alert('Error occurred. Error code: ' + error.code);
+                    });
+                } else {
+                    alert('Geolocation is not supported by this browser.');
+                }
+            });
+
+
+        // Get today's date
+        const today = new Date();
+
+        // Add 1 day to today's date for the deadline
+        const deadlineDate = new Date();
+        deadlineDate.setDate(today.getDate() + 1);
+
+        // Format date to YYYY-MM-DD
+        const formatDate = (date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        // Set the minimum value for Deadline Date
+        document.getElementById('deadline').setAttribute('min', formatDate(deadlineDate));
+
+        </script>
+
+           
+        {% endif %}
+</body>
+</html>
+ -->
+
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Firestore basics</title>
+        <link type="text/css" href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet"/>
+    <script type="module" src="{{ url_for('static', path='/firebase-login.js') }}"></script>
+    </head>
+<body>
+    <div id="login-box" hidden="true">
+        Email :<input type="email" name="" id="email"><br/>
+        Password: <input type="password" name="" id="password"><br/>
+        <button id="login">Login</button>
+        <button id="sign-up">Sign Up</button>
+    </div>
+
+    <div id="header-bar">
+        {% if user_token %}
+        <div id="buy-g2">
+            <form action="/buyG2" method="post" id="buyG2Token">
+                <input type="submit" value="Buy G2 Token"/>
+            </form>
+        </div>
+        {% endif %}
+        <div id="logout-button">
+            <button id="sign-out" hidden="true">Sign out</button>
+        </div>
+    </div>
+
+        {% if user_token %}
+        <div id="user-info">
+            <p>User email: {{ user_token.email }}</p>
+            <p>Name: {{ user_info.get('name') }}</p>
+        </div>
+
+        
+
+        <form action="/serachEmpl" id="serachEmplForm" method="post" class="styled-form">
+            <h2>Quick Hire</h2> <br/>
+            <p>Please choose an option:</p>
+            <select name="options" required>
+                <option value="" disabled selected>Select your option</option>
+                <option value="4 wheel Driver">4 wheel Driver</option>
+                <option value="Plumber">Plumber</option>
+                <option value="Electrician">Electrician</option>
+                <option value="Car Mechanic">Car Mechanic</option>
+                <option value="Bike Mechanic">Bike Mechanic</option>
+                <option value="Grass Cutter">Grass Cutter</option>
+                <option value="Wall Painter">Wall Painter</option>
+            </select>
+            <input type="hidden" id="location" name="location"/>
+            <input type="submit" value="Search Employee"/>
+        </form>
+
+        <br/>
+        <form action="/postJob" id="postJobid" method="post" class="styled-form">
+            <h2>Post your Job to do</h2><br/>
+            <p>Choose job type</p>
+            <select name="options" required>
+                <option value="" disabled selected>Select your option</option>
+                <option value="4 wheel Driver">4 wheel Driver</option>
+                <option value="Plumber">Plumber</option>
+                <option value="Electrician">Electrician</option>
+                <option value="Car Mechanic">Car Mechanic</option>
+                <option value="Bike Mechanic">Bike Mechanic</option>
+                <option value="Grass Cutter">Grass Cutter</option>
+                <option value="Wall Painter">Wall Painter</option>
+            </select>
+            <label for="deadline">Deadline date:</label>
+            <input type="date" name="deadline" id="deadline"/><br/>
+            <label for="maxbudget">Maximum budget:</label>
+            <input type="number" name="maxbudget"/><br/>
+            <label for="note">Note:</label>
+            <textarea name="note"></textarea><br/>
+            <h6>You should post this job from the required location.</h6><br/>
+            <input type="hidden" id="locationPost" name="location"/>
+            <input type="submit" value="Post Work"/>
+        </form>
+        <br/>
+
+
+        <table class="styled-table">
+            <caption>Your job posts</caption>
+            <thead>
+                <tr>
+                    <th>Job</th>
+                    <th>Deadline</th>
+                    <th>Note</th>
+                    <th>Maximum Budget</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for oneReq in posted_jobs %}
+                <tr>
+                    <td>{{oneReq.get('jobtype')}}</td>
+                    <td>{{oneReq.get('deadline')}}</td>
+                    <td>{{oneReq.get('note')}}</td>
+                    <td>{{oneReq.get('maxBudget')}}</td>
+                    <td>
+                        <form action="/viewBids" method="post">
+                            <input type="hidden" name="jobid" value="{{oneReq.get('id')}}"/>
+                            <input type="submit" value="View Biddings"/>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <script>
+            document.getElementById('postJobid').addEventListener('submit', function(event) {
+                event.preventDefault();
+    
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        document.getElementById('locationPost').value = position.coords.latitude + ',' + position.coords.longitude;
+                        document.getElementById('postJobid').submit();
+                    }, function(error) {
+                        alert('Error occurred. Error code: ' + error.code);
+                    });
+                } else {
+                    alert('Geolocation is not supported by this browser.');
+                }
+            });
+
+            document.getElementById('serachEmplForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+    
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        document.getElementById('location').value = position.coords.latitude + ',' + position.coords.longitude;
+                        document.getElementById('serachEmplForm').submit();
+                    }, function(error) {
+                        alert('Error occurred. Error code: ' + error.code);
+                    });
+                } else {
+                    alert('Geolocation is not supported by this browser.');
+                }
+            });
+
+
+        // Get today's date
+        const today = new Date();
+
+        // Add 1 day to today's date for the deadline
+        const deadlineDate = new Date();
+        deadlineDate.setDate(today.getDate() + 1);
+
+        // Format date to YYYY-MM-DD
+        const formatDate = (date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        // Set the minimum value for Deadline Date
+        document.getElementById('deadline').setAttribute('min', formatDate(deadlineDate));
+
+        </script>
+
+           
+        {% endif %}
+</body>
+</html>

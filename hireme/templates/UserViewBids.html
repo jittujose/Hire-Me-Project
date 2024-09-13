@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Firestore basics</title>
+        <link type="text/css" href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet"/>
+    <script type="module" src="{{ url_for('static', path='/firebase-login.js') }}"></script>
+    </head>
+<body>
+    <div id="login-box" hidden="true">
+        Email :<input type="email" name="" id="email"><br/>
+        Password: <input type="password" name="" id="password"><br/>
+        <button id="login">Login</button>
+        <button id="sign-up">Sign Up</button>
+    </div>
+    <button id="sign-out" hidden="true">Sign out</button>
+
+
+
+        {% if user_token %}
+            
+        <table class="styled-table">
+            <thead>
+            <tr>
+                <th>Deadline</th>
+                <th>Note</th>
+                <th>Maximum Budget</th>
+                <th>Bids</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for oneReq in jobs %}
+            <tr>
+                <td>{{oneReq.get('deadline')}}</td>
+                <td>{{oneReq.get('note')}}</td>
+                <td>{{oneReq.get('maxBudget')}}</td>
+                <td>
+                    <table>
+                        <th>Employ email</th><th>Bid amount</th><th>Action</th>
+                        {% for bid in oneReq.get('biddings') %}
+                        <tr><td>{{bid.get('emplEmail')}}</td>
+                        <td>{{bid.get('bidAmount')}}</td> 
+                    <td>
+                        <form action="/grandBid" method="post">
+                            <input type="hidden" name = "jobid" value="{{oneReq.get('id')}}"/>
+                            <input type="hidden" name = "emplEmail" value="{{bid.get('emplEmail')}}"/>
+                            <input type="hidden" name = "bidAmount" value="{{bid.get('bidAmount')}}"/>
+
+                            
+                            <input type="submit" value="Grand Bid"/>
+                        </form>
+                    </td></tr>
+                        {% endfor %}
+                    </table>
+                    
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+        </table>
+           
+            
+        {% endif %}
+</body>
+</html>

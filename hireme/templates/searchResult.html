@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Firestore basics</title>
+        <link type="text/css" href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet"/>
+    <script type="module" src="{{ url_for('static', path='/firebase-login.js') }}"></script>
+    </head>
+<body>
+    <div id="login-box" hidden="true">
+        Email :<input type="email" name="" id="email"><br/>
+        Password: <input type="password" name="" id="password"><br/>
+        <button id="login">Login</button>
+        <button id="sign-up">Sign Up</button>
+    </div>
+    <button id="sign-out" hidden="true">Sign out</button>
+
+
+
+        {% if user_token %}
+
+        <table class="styled-table">
+            <thead>
+            <tr>
+            <th>Name</th><th>Hourly Charge</th><th>Location</th><th>Rating</th><th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for oneUser in employees %}
+            <tr>
+                <td>{{ oneUser.get('name') }}</td>
+                <td>{{ oneUser.get('hrCharge') }}</td>
+                <td><a href="https://www.google.com/maps?q={{oneUser.get('location')}}" target="_blank">Click to get location</a></td>
+                <td>{{ oneUser.get('rating') }}</td>
+                <td>
+                    <form action="/hireEmpl" method="post">
+                        <input type="hidden" name = "email" value="{{ oneUser.get('email') }}"/>
+                        <input type="hidden" name = "emplLocation" value="{{ oneUser.get('location') }}"/>
+                        <p>Brief discription of work</p>
+                        <label for="note">Please mention how to contact when employee reach on the location</label>
+                        <textarea name="note" id="note"></textarea><br/>
+                        <input type="submit" value="Hire"/>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+        {% endif %}
+</body>
+</html>

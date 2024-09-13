@@ -1,0 +1,254 @@
+body {
+    font-family: "helvetica" , sans-sans-serif;
+    text-align: center;
+}
+/* CSS for the login-box */
+#login-box {
+    width: 300px; /* Set the width of the login box */
+    padding: 20px; /* Add padding inside the box */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+    background-color: #fff; /* White background */
+    margin: 100px auto; /* Center the box on the page */
+    text-align: center; /* Center text inside the box */
+    display: flex; /* Flexbox layout */
+    flex-direction: column; /* Arrange children in a column */
+    align-items: center; /* Center align the items */
+    justify-content: center; /* Center items vertically */
+}
+
+#login-box input[type="email"],
+#login-box input[type="password"] {
+    width: 100%; /* Full width of the box */
+    padding: 10px; /* Add padding inside inputs */
+    margin: 10px 0; /* Add space between inputs */
+    border: 1px solid #ccc; /* Light gray border */
+    border-radius: 4px; /* Slightly rounded corners */
+    box-sizing: border-box; /* Include padding and border in width */
+}
+
+#login-box button {
+    width: 100%; /* Full width buttons */
+    padding: 10px; /* Add padding inside buttons */
+    margin: 10px 0; /* Add space between buttons */
+    border: none; /* Remove default border */
+    border-radius: 4px; /* Rounded corners */
+    background-color: #007bff; /* Blue background */
+    color: #fff; /* White text */
+    font-size: 16px; /* Slightly larger text */
+    cursor: pointer; /* Pointer cursor on hover */
+}
+
+#login-box button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+/*  Hide login box initially */
+#login-box[hidden] {
+    display: none;
+}
+
+/* Styles for main.html */
+
+#header-bar {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+#header-bar #buy-g2 {
+    margin-right: auto;
+    margin-left: 20px;
+}
+
+#header-bar #logout-button {
+    margin-right: 20px;
+}
+
+#header-bar button, #header-bar input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 5px;
+}
+
+#header-bar button:hover, #header-bar input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+#content {
+    padding: 20px;
+}
+
+.styled-form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 600px;
+}
+
+.styled-form p {
+    font-weight: bold;
+}
+
+.styled-form select,
+.styled-form input[type="date"],
+.styled-form input[type="number"],
+.styled-form textarea {
+    width: 100%;
+    padding: 8px;
+    margin: 10px 0;
+    box-sizing: border-box;
+}
+
+.styled-form input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.styled-form input[type="submit"]:hover {
+    background-color: #555;
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+}
+
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+.styled-table th {
+    background-color: #333;
+    color: white;
+}
+
+.styled-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.styled-table tr:hover {
+    background-color: #ddd;
+}
+.styled-table caption {
+    caption-side: top; /* Position caption at the top of the table */
+    font-weight: bold; /* Make the caption text bold */
+    font-size: 18px; /* Adjust the font size */
+    margin-bottom: 10px; /* Add some space between the caption and the table */
+    color: #333; /* Change the text color */
+    text-align: center; /* Align the caption text to the left */
+    padding: 10px 0; /* Add some padding above and below the caption */
+}
+
+/* Default link style */
+a {
+    color: #007BFF; /* Blue color for links */
+    text-decoration: none; /* Remove underline */
+    font-weight: bold; /* Make links bold */
+}
+
+/* Link hover state */
+a:hover {
+    color: #0056b3; /* Darker blue on hover */
+    text-decoration: underline; /* Add underline on hover */
+}
+
+/* Link active state */
+a:active {
+    color: #003d80; /* Even darker blue when the link is active (clicked) */
+}
+
+/* Visited link state */
+a:visited {
+    color: #5a5a5a; /* Gray color for visited links */
+}
+
+/* Link focus state (for accessibility) */
+a:focus {
+    outline: 2px dashed #007BFF; /* Add a dashed outline when focused */
+    outline-offset: 2px; /* Offset the outline slightly */
+}
+
+
+/* Mobile specific styles */
+@media only screen and (max-width: 768px) {
+    /* Adjust login-box for mobile */
+    #login-box {
+        width: 90%; /* Use a larger width for mobile */
+        margin: 50px auto; /* Reduce margin for mobile */
+    }
+
+    /* Adjust header bar */
+    #header-bar {
+        flex-direction: column; /* Stack items vertically */
+        text-align: center;
+        padding: 5px;
+    }
+
+    #header-bar button, #header-bar input[type="submit"] {
+        width: 90%; /* Wider buttons on mobile */
+        margin: 5px auto;
+    }
+
+    /* Adjust styled-form */
+    .styled-form {
+        max-width: 90%; /* Reduce form width */
+        padding: 15px;
+        margin: 10px auto;
+    }
+
+    /* Adjust table on mobile */
+    .styled-table th, .styled-table td {
+        font-size: 14px; /* Smaller font on mobile */
+        padding: 10px;
+    }
+
+    .styled-table {
+        font-size: 14px;
+    }
+}
+
+/* Smaller screens, like phones */
+@media only screen and (max-width: 480px) {
+    /* Further adjust login-box for very small screens */
+    #login-box {
+        width: 100%;
+        margin: 30px auto;
+        padding: 15px;
+    }
+
+    /* Adjust header-bar */
+    #header-bar button, #header-bar input[type="submit"] {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    /* Adjust forms for mobile */
+    .styled-form {
+        padding: 10px;
+        margin: 5px auto;
+    }
+
+    /* Adjust table on small mobile */
+    .styled-table th, .styled-table td {
+        font-size: 12px; /* Smaller font for small mobile devices */
+        padding: 8px;
+    }
+}

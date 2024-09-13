@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Firestore basics</title>
+        <link type="text/css" href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet"/>
+    <script type="module" src="{{ url_for('static', path='/firebase-login.js') }}"></script>
+    </head>
+<body>
+    <div id="login-box" hidden="true">
+        Email :<input type="email" name="" id="email"><br/>
+        Password: <input type="password" name="" id="password"><br/>
+        <button id="login">Login</button>
+        <button id="sign-up">Sign Up</button>
+    </div>
+    <div id="logout-button">
+    <button id="sign-out" hidden="true">Sign out</button>
+    </div>
+
+
+        {% if user_token %}
+            
+        <h2>Hello {{ user_info.get('name') }}</h2><br/>
+        <a href="\">Reload</a><br/>
+        {% if user_info.get('avail') == "No" %}
+    <form id="activateForm" action="/activate" method="post" class="styled-form">
+        <input type="hidden" name="email" value="{{ user_info.get('email') }}"/>
+        <input type="hidden" id="location" name="location"/>
+        <input type="submit" value="Activate"/>
+    </form>
+    {% endif %}
+    {% if user_info.get('avail') == "Active" %}
+    <form action="/deactivate" method="post" class="styled-form">
+        <input type="hidden" name="email" value="{{ user_info.get('email') }}"/>
+        <input type="submit" value="De-Activate"/>
+    </form>
+
+    <br/>
+    <table class="styled-table">
+        <caption>Quick Hire Requests</caption>
+        <thead>
+        <tr><th>User Name </th> 
+            <th> location </th> 
+            <th>Date and time of request</th>
+            <th>Note</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for oneReq in hiringReqs %}
+        <tr><td>{{oneReq.get('userName')}}</td> 
+            <td><a href="https://www.google.com/maps?q={{oneReq.get('userLocation')}}" target="_blank">Click to get location</a></td>
+            <td>{{oneReq.get('date')}}</td>
+            <td>{{oneReq.get('note')}}</td>
+            <td>
+                <form action="/acceptJob" method="post">
+                    <input type="hidden" name = "reqid" value="{{oneReq.get('id')}}"/>
+                    <input type="hidden" name = "otpstatus" value="no OTP"/>
+                    <input type="submit" value="Accept"/>
+                </form>
+                <form action="/rejectJob" method="post">
+                    <input type="hidden" name = "reqid" value="{{oneReq.get('id')}}"/>
+
+                    <input type="submit" value="Reject"/>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</tbody>
+    </table>
+
+    <br/>
+    
+    {% endif %}
+    <table class="styled-table">
+        <caption>Jobs Won In bidding</caption>
+        <thead>
+        <tr><th>User Name </th> 
+            <th> location </th> 
+            <th>Deadline</th>
+            <th>Note</th>
+            <th>Maximum Budget</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for oneReq in wins %}
+        <tr><td>{{oneReq.get('userName')}}</td> 
+            <td><a href="https://www.google.com/maps?q={{oneReq.get('Location')}}" target="_blank">Click to get location</a></td>
+            <td>{{oneReq.get('deadline')}}</td>
+            <td>{{oneReq.get('note')}}</td>
+            <td>{{oneReq.get('amount')}}</td>
+            <td>
+                <form action="/startWinWork" method="post">
+                    <input type="hidden" name = "jobid" value="{{oneReq.get('id')}}"/>
+                    <input type="hidden" name = "emplEmail" value="{{ user_token.email }}"/>
+                    <input type="hidden" name = "amount" value="{{oneReq.get('amount')}}"/>
+                    <input type="submit" value="Start Work"/>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</tbody>
+    </table>
+
+    <table class="styled-table">
+        <caption>New jobs for bidding</caption>
+        <thead>
+        <tr><th>User Name </th> 
+            <th> location </th> 
+            <th>Deadline</th>
+            <th>Note</th>
+            <th>Maximum Budget</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for oneReq in jobs %}
+        <tr><td>{{oneReq.get('userName')}}</td> 
+            <td><a href="https://www.google.com/maps?q={{oneReq.get('Location')}}" target="_blank">Click to get location</a></td>
+            <td>{{oneReq.get('deadline')}}</td>
+            <td>{{oneReq.get('note')}}</td>
+            <td>{{oneReq.get('maxBudget')}}</td>
+            <td>
+                <form action="/newBid" method="post">
+                    <input type="hidden" name = "jobid" value="{{oneReq.get('id')}}"/>
+                    <input type="hidden" name = "emplEmail" value="{{ user_token.email }}"/>
+                    Bid amount<input type="number" name="bidAmount" required/>
+                    <input type="submit" value="Bid"/>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+
+    <script>
+        document.getElementById('activateForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    document.getElementById('location').value = position.coords.latitude + ',' + position.coords.longitude;
+                    document.getElementById('activateForm').submit();
+                }, function(error) {
+                    alert('Error occurred. Error code: ' + error.code);
+                });
+            } else {
+                alert('Geolocation is not supported by this browser.');
+            }
+        });
+    </script>
+
+            
+        {% endif %}
+</body>
+</html>

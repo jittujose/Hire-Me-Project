@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Firestore basics</title>
+        <link type="text/css" href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet"/>
+    <script type="module" src="{{ url_for('static', path='/firebase-login.js') }}"></script>
+    </head>
+<body>
+    <div id="login-box" hidden="true">
+        Email :<input type="email" name="" id="email"><br/>
+        Password: <input type="password" name="" id="password"><br/>
+        <button id="login">Login</button>
+        <button id="sign-up">Sign Up</button>
+    </div>
+    <button id="sign-out" hidden="true">Sign out</button>
+
+
+
+        {% if user_token %}
+
+        <table class="styled-table">
+            <caption>New employees registered</caption>
+            <thead>
+            <tr>
+            <th>Name</th><th>Email</th><th>Field</th><th>Hourly Charge</th><th>Document</th><th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for oneUser in pending_users %}
+
+            <tr>
+                <td>{{ oneUser.get('name') }}</td>
+                <td>{{ oneUser.get('email') }}</td>
+                <td>{{ oneUser.get('field') }}</td>
+                <td>{{ oneUser.get('hrCharge') }}</td>
+                <td><a href="{{ oneUser.get('filename') }}"> Click To download </a></td>
+                <td>
+                    <form action="approve_user" method="post">
+                        <input type="hidden" name = "email" value="{{ oneUser.get('email') }}"/>
+                        <input type="submit" value="Approve"/>
+                    </form>
+                    <form action="reject_user" method="post">
+                        <input type="hidden" name = "email" value="{{ oneUser.get('email') }}"/>
+                        <input type="submit" value="Reject"/>
+                    </form>
+                </td>
+            </tr>
+            
+            {% endfor %}
+        </tbody>
+        </table>
+        {% endif %}
+</body>
+</html>

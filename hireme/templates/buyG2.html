@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>G2 Token Balance</title>
+        <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+        <link type="text/css" href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet"/>
+        <script type="module" src="{{ url_for('static', path='/firebase-login.js') }}"></script>
+    </head>
+<body>
+    <div id="login-box" hidden="true">
+        Email :<input type="email" name="" id="email"><br/>
+        Password: <input type="password" name="" id="password"><br/>
+        <button id="login">Login</button>
+        <button id="sign-up">Sign Up</button>
+    </div>
+    <button id="sign-out" hidden="true">Sign out</button>
+
+        {% if user_token %}
+
+    <h1>Check G2 Token Balance</h1>
+    <button id="connectButton">Connect MetaMask</button>
+    <p>Wallet Address: <span id="walletAddress"></span></p>
+    <p>G2 Token Balance: <span id="tokenBalance">0</span></p>
+    <br><br>
+    <h2>Buy G2 Tokens</h2>
+    <form id="buyTokensForm" class="styled-form">
+        <label for="numTokens">Number of G2 Tokens to Buy:</label><br/>
+        Cost: <span id="cost">0</span> MATIC
+        <input type="number" id="numTokens" name="numTokens" min="1" required />
+        <input type="submit" value="Buy Tokens" />
+    </form>
+
+    <p id="purchaseStatus"></p>
+    <br/>
+    <a href="\">Home</a>
+    {% endif %}
+    <script>
+        const contractAddress = "0x5c25bcc566561becb96a43f620e0714e0d4211f4"; // Replace with your contract address
+        const contractABI = [ // Replace with your contract's ABI
+            {
+                "constant": true,
+                "inputs": [{"name": "account", "type": "address"}],
+                "name": "balanceOf",
+                "outputs": [{"name": "", "type": "uint256"}],
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [{"name": "tokens", "type": "uint256"}],
+                "name": "purchaseToken",
+                "outputs": [{"name": "success", "type": "bool"}],
+                "type": "function"
+            }
+        ];
+
+        let provider;
+        let signer;
+        let contract;
+
+        async function connectMetaMask() {
+            if (window.ethereum) {
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                await provider.send("eth_requestAccounts", []);
+                signer = provider.getSigner();
+                const walletAddress = await signer.getAddress();
+                document.getElementById("walletAddress").innerText = walletAddress;
+                contract = new ethers.Contract(contractAddress, contractABI, signer);
+                getBalance(walletAddress);
+            } else {
+                alert("MetaMask not detected! Please install MetaMask.");
+            }
+        }
+
+        async function getBalance(address) {
+            const balance = await contract.balanceOf(address);
+            const formattedBalance = ethers.utils.formatUnits(balance, 18); // Assuming 18 decimals
+            document.getElementById("tokenBalance").innerText = formattedBalance;
+        }
+
+        async function buyTokens(event) {
+            event.preventDefault(); // Prevent form submission
+            const numTokens = document.getElementById("numTokens").value;
+            const tokenstoBuy = ethers.utils.parseUnits(numTokens, "ether");
+            const pricePerToken = ethers.utils.parseUnits("0.000005", "ether"); // Assuming price is 0.05 Matic per token
+            const totalCost = pricePerToken.mul(numTokens);
+
+            try {
+                const transaction = await contract.purchaseToken(tokenstoBuy, { value: totalCost });
+                await transaction.wait(); // Wait for the transaction to be mined
+                document.getElementById("purchaseStatus").innerText = "Purchase successful!";
+                const walletAddress = await signer.getAddress();
+                getBalance(walletAddress); // Update balance after purchase
+            } catch (error) {
+                console.error("Purchase failed:", error);
+                document.getElementById("purchaseStatus").innerText = "Purchase failed. See console for details.";
+            }
+        }
+
+        
+        document.getElementById("connectButton").addEventListener("click", connectMetaMask);
+        document.getElementById("buyTokensForm").addEventListener("submit", buyTokens);
+          // Function to update the cost
+    function updateCost() {
+        const numTokens = document.getElementById('numTokens').value;
+        const cost = (numTokens * 0.000005).toFixed(6); // Multiply and format to 6 decimal places
+        document.getElementById('cost').innerText = cost; // Update the cost in the <p> tag
+    }
+
+    // Add an event listener to the input field to listen for changes
+    document.getElementById('numTokens').addEventListener('input', updateCost);
+
+    </script>
+</body>
+</html>

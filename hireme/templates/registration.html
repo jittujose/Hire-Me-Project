@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Firestore basics</title>
+        <link type="text/css" href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet"/>
+    <script type="module" src="{{ url_for('static', path='/firebase-login.js') }}"></script>
+    </head>
+<body>
+    <div id="login-box" hidden="true">
+        Email :<input type="email" name="" id="email"><br/>
+        Password: <input type="password" name="" id="password"><br/>
+        <button id="login">Login</button>
+        <button id="sign-up">Sign Up</button>
+    </div>
+    <button id="sign-out" hidden="true">Sign out</button>
+
+
+
+        {% if user_token %}
+            <p>User email: {{ user_token.email }}</p>
+            
+
+            <form action="/add-category" method="post" class="styled-form">
+                <h2>please fill the form to register</h2>
+                <label for="name">Name</label>
+                <input type="text" name="name" value="" id="name" required/><br/>
+                <p>Please choose an option:</p>
+        
+                <input type="radio" id="user" name="options" value="User">
+                <label for="User">User</label><br>
+        
+                <input type="radio" id="employee" name="options" value="Employee">
+                <label for="employee">Employee</label><br>
+                
+                <input type="submit" value="Submit">
+            </form>
+
+           
+            
+        {% endif %}
+</body>
+</html>

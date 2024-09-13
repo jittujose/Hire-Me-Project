@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Firestore basics</title>
+        <link type="text/css" href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet"/>
+    <script type="module" src="{{ url_for('static', path='/firebase-login.js') }}"></script>
+    </head>
+<body>
+    <div id="login-box" hidden="true">
+        Email :<input type="email" name="" id="email"><br/>
+        Password: <input type="password" name="" id="password"><br/>
+        <button id="login">Login</button>
+        <button id="sign-up">Sign Up</button>
+    </div>
+    <button id="sign-out" hidden="true">Sign out</button>
+
+
+
+        {% if user_token %}
+            {% for oneReq in hiringReq %}
+            
+        <h2>{{ oneReq.get('status') }}</h2><br/>
+
+            {% if oneReq.get('status') == "Pending" %}
+            <h3> Waiting for the Employee  {{ oneReq.get('emplEmail') }} to accept Job</h3>
+            <form action="/stopwaiting" method="post" class="styled-form">
+                <input type="hidden" name="reqid" value="{{ oneReq.get('id') }}"/>
+                <input type="submit" value="Stop Waiting for Employee"/>
+            </form>
+            <br/>
+            <a href="\">Reload</a>
+            {% endif %}
+           {% if oneReq.get('status') == "Accepted" %}
+            <h3>OTP : {{ oneReq.get('otp') }} </h3>
+            <form action="/startWork" method="post" class="styled-form">
+                <input type="hidden" name = "reqid" value="{{oneReq.get('id')}}"/>
+                <input type="submit" value="Confirm OTP and start work"/>
+                </form>
+            {% elif oneReq.get('status') == "Started"%}
+            <form action="/finishWork" method="post" class="styled-form">
+                <input type="hidden" name = "reqid" value="{{oneReq.get('id')}}"/>
+                <input type="submit" value="Finish work"/>
+                </form>
+
+            {% elif oneReq.get('status') == "Finished"%}
+            <h2>{{ oneReq.get('duration') }} hours</h2>
+
+            <h2>Total Amount: {{ oneReq.get('totalCost') }}  euro </h2>
+            {% if wallet != "" %}
+            <form action="/cryptoPay" method="post" class="styled-form">
+                <input type="hidden" name='cost' value="{{ oneReq.get('totalCost')  }}">
+                <input type="hidden" name='wallet' value="{{ wallet }}">
+                <input type="hidden" name='id' value="{{ oneReq.get('id') }}">
+                <input type="submit" value="Payment using G2 token"/>
+            </form>
+            {% endif %}
+            <form action="/allDone" method="post" class="styled-form">
+                <h2>Direct Payment</h2>
+                <input type="hidden" value="{{ oneReq.get('id') }}" name="id"/>
+                <label for="rating">Rating (0 to 5):</label>
+                    <input type="number" id="rating" name="rating" min="0" max="5" step="1" value="5" required/>
+                <input type="submit" value="Payment Done"/>
+            </form>
+           {% endif %}
+           
+            {% endfor %}
+        {% endif %}
+</body>
+</html>

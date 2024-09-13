@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Firestore basics</title>
+        <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+        <link type="text/css" href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet"/>
+    <script type="module" src="{{ url_for('static', path='/firebase-login.js') }}"></script>
+    </head>
+<body>
+    <div id="login-box" hidden="true">
+        Email :<input type="email" name="" id="email"><br/>
+        Password: <input type="password" name="" id="password"><br/>
+        <button id="login">Login</button>
+        <button id="sign-up">Sign Up</button>
+    </div>
+    <div id="logout-button">
+    <button id="sign-out" hidden="true">Sign out</button>
+</div>
+
+
+        {% if user_token %}
+            <p>User email: {{ user_token.email }}</p>
+            <p>Name: {{ user_info.get('name') }}</p>
+
+
+
+
+            <form action="/emplreg" method="post" enctype="multipart/form-data" class="styled-form">
+                <h2>Please Fill the form for registration</h2>
+                <p>Please choose an option:</p>
+                
+                <select name="options" required>
+                    <option value="" disabled selected>Select your option</option>
+                    <option value="4 wheel Driver">4 wheel Driver</option>
+                    <option value="Plumber">Plumber</option>
+                    <option value="Electrician">Electrician</option>
+                    <option value="Car Mechanic">Car Mechanic</option>
+                    <option value="Bike Mechanic">Bike Mechanic</option>
+                    <option value="Grass Cutter">Grass Cutter</option>
+                    
+                </select>
+                <br/>
+                <label for="hrCharge">Hourly Charge</label>
+                <input type="number" name="hrCharge" required/>
+                <br/>
+                <label for="document">Upload related certificates or license</label>
+                <input type="file" name="document" required/>
+                <br/>
+                <label for="wallet address">Get your Meta Mask wallet address </label>
+                    <button type="button" id="connectButton">Connect MetaMask</button>
+                    <p>Wallet Address: <span id="walletAddress"></span></p>
+                    <p>G2 Token Balance: <span id="tokenBalance">0</span></p>
+                <input type="hidden" name="walletAddress" id="walletAddressform"/>
+                <br/>
+                <input type="submit" value="Submit">
+            </form>
+        
+
+           
+            
+        {% endif %}
+
+
+
+        <script>
+            const contractAddress = "0x5c25bcc566561becb96a43f620e0714e0d4211f4"; // Replace with your contract address
+            const contractABI = [ // Replace with your contract's ABI
+                {
+                    "constant": true,
+                    "inputs": [{"name": "account", "type": "address"}],
+                    "name": "balanceOf",
+                    "outputs": [{"name": "", "type": "uint256"}],
+                    "type": "function"
+                },
+                // Add other necessary ABI items like totalSupply if needed
+            ];
+    
+            let provider;
+            let signer;
+            let contract;
+    
+            async function connectMetaMask() {
+                if (window.ethereum) {
+                    provider = new ethers.providers.Web3Provider(window.ethereum);
+                    await provider.send("eth_requestAccounts", []);
+                    signer = provider.getSigner();
+                    const walletAddress = await signer.getAddress();
+                    document.getElementById("walletAddress").innerText = walletAddress;
+                    document.getElementById("walletAddressform").value = walletAddress;
+                    contract = new ethers.Contract(contractAddress, contractABI, signer);
+                    getBalance(walletAddress);
+                } else {
+                    alert("MetaMask not detected! Please install MetaMask.");
+                }
+            }
+    
+            async function getBalance(address) {
+                const balance = await contract.balanceOf(address);
+                const formattedBalance = ethers.utils.formatUnits(balance, 18); // Assuming 18 decimals
+                document.getElementById("tokenBalance").innerText = formattedBalance;
+            }
+    
+            document.getElementById("connectButton").addEventListener("click", connectMetaMask);
+        </script>
+</body>
+</html>

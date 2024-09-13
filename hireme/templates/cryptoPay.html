@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>G2 Token Balance</title>
+        <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+        <link type="text/css" href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet"/>
+        <script type="module" src="{{ url_for('static', path='/firebase-login.js') }}"></script>
+    </head>
+<body>
+    <div id="login-box" hidden="true">
+        Email :<input type="email" name="" id="email"><br/>
+        Password: <input type="password" name="" id="password"><br/>
+        <button id="login">Login</button>
+        <button id="sign-up">Sign Up</button>
+    </div>
+    <button id="sign-out" hidden="true">Sign out</button>
+
+        {% if user_token %}
+
+    <h1>Check G2 Token Balance</h1>
+    <button id="connectButton">Connect MetaMask</button>
+    <p>Wallet Address: <span id="walletAddress"></span></p>
+    <p>G2 Token Balance: <span id="tokenBalance">0</span></p>
+    <br><br>
+    <!-- <h2>Buy G2 Tokens</h2>
+    <form id="buyTokensForm">
+        <label for="numTokens">Number of G2 Tokens to Buy:</label>
+        <input type="number" id="numTokens" name="numTokens" min="1" required />
+        <input type="submit" value="Buy Tokens" />
+    </form>
+
+    <p id="purchaseStatus"></p> -->
+    <br/>
+
+    <h1>{{ cost }}</h1>
+    <h2>Transfer G2 Tokens</h2>
+    {% for oneReq in hiringReq%}
+<form id="transferTokensForm" class="styled-form">
+    <label for="recipientAddress">Recipient Address:</label>
+    <input type="text" id="recipientAddress" name="recipientAddress" value="{{ oneReq.get('emplWallet') }}" required /><br/>
+    <label for="transferAmount">Number of G2 Tokens to Transfer:</label>
+    <input type="number" id="transferAmount" name="transferAmount" min="1" value="{{ oneReq.get('totalCost') }}" required /><br/>
+    <button id="transferBtn">Transfer token</button>
+    <!-- <input type="submit" value="Transfer Tokens" /> -->
+</form>
+    {% endfor %}
+<p id="transferStatus"></p>
+{% for oneReq in hiringReq%}
+<form action="/allDone" method="post" class="styled-form">
+    <input type="hidden" value="{{ oneReq.get('id') }}" name="id"/>
+    <label for="rating">Rating (0 to 5):</label>
+        <input type="number" id="rating" name="rating" min="0" max="5" step="1" value="0" required/>
+    <input type="submit" value="Payment Done"/>
+</form>
+{% endfor %}
+    {% endif %}
+    <script>
+        const contractAddress = "0x5c25bcc566561becb96a43f620e0714e0d4211f4"; //  contract address
+        const contractABI = [ //Replace with your contract's ABI
+            {
+                "constant": true,
+                "inputs": [{"name": "account", "type": "address"}],
+                "name": "balanceOf",
+                "outputs": [{"name": "", "type": "uint256"}],
+                "type": "function"
+            },
+            {
+                "constant": false,
+                "inputs": [{"name": "tokens", "type": "uint256"}],
+                "name": "purchaseToken",
+                "outputs": [{"name": "success", "type": "bool"}],
+                "type": "function"
+            },
+            {
+        "constant": false,
+        "inputs": [
+            {"name": "recipient", "type": "address"},
+            {"name": "amount", "type": "uint256"}
+        ],
+        "name": "transfer",
+        "outputs": [{"name": "success", "type": "bool"}],
+        "type": "function"
+    }
+        ];
+
+        let provider;
+        let signer;
+        let contract;
+
+        async function connectMetaMask() {
+            if (window.ethereum) {
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                await provider.send("eth_requestAccounts", []);
+                signer = provider.getSigner();
+                const walletAddress = await signer.getAddress();
+                document.getElementById("walletAddress").innerText = walletAddress;
+                contract = new ethers.Contract(contractAddress, contractABI, signer);
+                getBalance(walletAddress);
+            } else {
+                alert("MetaMask not detected! Please install MetaMask.");
+            }
+        }
+
+        async function getBalance(address) {
+            const balance = await contract.balanceOf(address);
+            const formattedBalance = ethers.utils.formatUnits(balance, 18); // Assuming 18 decimals
+            document.getElementById("tokenBalance").innerText = formattedBalance;
+        }
+
+        async function buyTokens(event) {
+            event.preventDefault(); // Prevent form submission
+            const numTokens = document.getElementById("numTokens").value;
+            
+            const pricePerToken = ethers.utils.parseUnits("0.05", "ether"); // Assuming price is 0.05 Matic per token
+            const totalCost = pricePerToken.mul(numTokens);
+
+            try {
+                const transaction = await contract.purchaseToken(numTokens, { value: totalCost });
+                await transaction.wait(); // Wait for the transaction to be mined
+                document.getElementById("purchaseStatus").innerText = "Purchase successful!";
+                const walletAddress = await signer.getAddress();
+                getBalance(walletAddress); // Update balance after purchase
+            } catch (error) {
+                console.error("Purchase failed:", error);
+                document.getElementById("purchaseStatus").innerText = "Purchase failed. See console for details.";
+            }
+        }
+
+        async function transferTokens(event) {
+            console.log({event})
+    event.preventDefault(); // Prevent form submission
+    const recipientAddress = document.getElementById("recipientAddress").value;
+    const amount = document.getElementById("transferAmount").value;
+
+    try {
+        const transferAmount = ethers.utils.parseUnits(amount, 18); // Assuming 18 decimals
+
+        const transaction = await contract.transfer(recipientAddress, transferAmount);
+        await transaction.wait(); // Wait for the transaction to be mined
+
+        document.getElementById("transferStatus").innerText = "Transfer successful!";
+        const walletAddress = await signer.getAddress();
+        getBalance(walletAddress); // Update balance after transfer
+    } catch (error) {
+        console.error("Transfer failed:", error);
+        document.getElementById("transferStatus").innerText = "Transfer failed. See console for details.";
+    }
+}
+
+        
+        document.getElementById("connectButton").addEventListener("click", connectMetaMask);
+        document.getElementById("transferBtn").addEventListener("click", transferTokens);
+        document.getElementById("buyTokensForm").addEventListener("submit", buyTokens);
+        // document.getElementById("transferTokensForm").addEventListener("submit", transferTokens);
+    </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Firestore basics</title>
+        <link type="text/css" href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet"/>
+    <script type="module" src="{{ url_for('static', path='/firebase-login.js') }}"></script>
+    </head>
+<body>
+    <div id="login-box" hidden="true">
+        Email :<input type="email" name="" id="email"><br/>
+        Password: <input type="password" name="" id="password"><br/>
+        <button id="login">Login</button>
+        <button id="sign-up">Sign Up</button>
+    </div>
+    <button id="sign-out" hidden="true">Sign out</button>
+
+
+
+        {% if user_token %}
+            {% for oneReq in hiringReq %}
+            
+        <h2>{{ oneReq.get('userName') }}</h2><br/>
+        <a href="\">Reload</a>
+        <br/>
+        
+           <h4><a href="https://www.google.com/maps?q={{oneReq.get('userLocation')}}" target="_blank">Click to get location</a></h4><br/>
+           
+           <!-- Note : {{ oneReq.get('note') }} -->
+
+            {% if oneReq.get('status') == "Accepted" %}
+            <h3>OTP : {{ oneReq.get('otp') }} </h3>
+            
+            <br/>
+            Note: {{ oneReq.get('note') }}
+            {% elif oneReq.get('status') == "Started"%}
+            Note: {{ oneReq.get('note') }} <br/>
+            <h3>Finish</h3>
+            
+            {% endif %}
+            
+
+            {% endfor %}
+        {% endif %}
+        
+</body>
+</html>
